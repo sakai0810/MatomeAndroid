@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">まとめ</string>
+    <string name="tab_caption_new">新着</string>
+    <string name="tab_caption_popular">人気</string>
+
+    <string name="test_article_title">これはテストの記事タイトルです</string>
+    <string name="title_activity_article_web">ArticleWebActivity</string>
+
+    <string name="error_network_snackbar">通信に失敗しました</string>
+    <string name="error_network_load_more">通信に失敗しました</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
+
