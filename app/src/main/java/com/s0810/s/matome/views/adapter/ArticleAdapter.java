@@ -97,6 +97,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         notifyDataSetChanged();
     }
 
+
     /**
      * 更に読み込むが失敗したかどうかを設定します。
      * 設定するとその内容に応じてViewも切り替えます

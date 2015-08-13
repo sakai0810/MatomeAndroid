@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:clipToPadding="false">
+
+    <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:alpha="0.3"
+        android:background="@color/primary_text"
+        android:layout_marginTop="-89dp">
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="89dp"
+        android:layout_marginTop="0dp"
+        android:background="@color/primary"
+        android:clipToPadding="false"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/button_accept_design"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="このデザインを使用する"
+            android:background="@color/accent"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+
+</LinearLayout>

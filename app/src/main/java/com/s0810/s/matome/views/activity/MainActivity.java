@@ -18,7 +18,7 @@ import com.s0810.s.matome.views.fragment.NewArticleFragment;
 public class MainActivity extends AppCompatActivity {
 
     ///ツールバー
-    private Toolbar toolbar;
+    public Toolbar toolbar;
     ///タブ
     private TabLayout tabLayout;
     ///ドロワー
