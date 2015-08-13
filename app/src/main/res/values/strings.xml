@@ -12,6 +12,7 @@
     <!--デザイン選択用のダミーの記事情報-->
     <string name="dummy_title_big_image">大きな画像で見やすいスタイル</string>
     <string name="dummy_title_small_image">小さな画像でたくさんの記事を一度に見れるスタイル</string>
+    <string name="dummy_title_text_only">テキストのみのシンプルなスタイル</string>
     <string name="dummy_blog_name">サンプル</string>
     <string name="dummy_img_url">http://www.lirent.net/wp-content/uploads/2014/10/Android-Lollipop-wallpapers-p-800x500.png</string>
 

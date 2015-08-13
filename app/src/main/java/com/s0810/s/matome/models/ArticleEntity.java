@@ -25,6 +25,11 @@ public class ArticleEntity {
      */
     private String title;
 
+    /**
+     * リソースID（imageUrlが設定されている場合はimageUrlが優先されます）
+     */
+    private int imageResId;
+
 
     public String getTitle() {
         return title;
@@ -57,5 +62,14 @@ public class ArticleEntity {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public int getImageResId() {
+        return imageResId;
+    }
+
+    public void setImageResId(int imageResId) {
+        this.imageResId = imageResId;
+    }
+
 
 }

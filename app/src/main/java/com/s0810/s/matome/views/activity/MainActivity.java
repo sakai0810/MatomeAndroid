@@ -1,5 +1,7 @@
 package com.s0810.s.matome.views.activity;
 
+import android.content.Intent;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,9 +15,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.s0810.s.matome.R;
+import com.s0810.s.matome.models.UserSettingManager;
 import com.s0810.s.matome.views.fragment.NewArticleFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     ///ツールバー
     public Toolbar toolbar;
@@ -25,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     ///ドロワートグル
     private ActionBarDrawerToggle mDrawerToggle;
+    ///ナビゲーション
+    private NavigationView navigationView;
     ///ViewPager
     private ViewPager viewPager;
 
@@ -39,11 +44,24 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
+        navigationView = (NavigationView) findViewById(R.id.navigation);
         setSupportActionBar(toolbar);
 
         //タブとドロワー初期化
         initTablayout();
         initDrawerToggle();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //記事表示種別が保存されていなかった場合は選択画面を表示する
+        UserSettingManager userSettingManager = new UserSettingManager(getApplicationContext());
+        if (!userSettingManager.hasArticleItemTypeSetting()) {
+            Intent intent = new Intent(this, FirstUserActivity.class);
+            startActivity(intent);
+        }
     }
 
     /**
@@ -61,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
     }
 
+
     /**
      * ドロワートグルを初期化します
      */
@@ -68,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.app_name, R.string.app_name);
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerToggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
         drawerLayout.setDrawerListener(mDrawerToggle);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -81,6 +101,16 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
+
+        Intent intent = new Intent(this, FirstUserActivity.class);
+        startActivity(intent);
+
+        drawerLayout.closeDrawers();
+        return false;
     }
 
     /**

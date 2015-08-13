@@ -1,6 +1,7 @@
 package com.s0810.s.matome.network;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -51,10 +52,10 @@ public class NewArticleFetcher {
      * ページ番号を指定してフェッチを開始します
      */
     public void executeFetch(final int page) {
-
         //まず全てキャンセル
         cancelAllFetch();
 
+        //リクエストキュー作成
         requestQueue = Volley.newRequestQueue(context);
         requestQueue.add(new JsonArrayRequest(Request.Method.GET, urlWithPageQuery(), "", new Response.Listener<JSONArray>() {
             @Override
@@ -72,6 +73,9 @@ public class NewArticleFetcher {
             @Override
             public void onErrorResponse(VolleyError error) {
                 //エラー
+                if (error != null) {
+                    Log.d("NetworkError",error.getLocalizedMessage());
+                }
                 listener.onNewArticleFetchError(error);
             }
         }));

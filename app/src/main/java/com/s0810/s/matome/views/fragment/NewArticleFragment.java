@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import com.android.volley.VolleyError;
 import com.s0810.s.matome.R;
 import com.s0810.s.matome.models.ArticleEntity;
+import com.s0810.s.matome.models.UserSettingManager;
 import com.s0810.s.matome.network.NewArticleFetcher;
 import com.s0810.s.matome.network.NewArticleFetcherCallBack;
 import com.s0810.s.matome.views.activity.ArticleWebActivity;
@@ -40,6 +41,7 @@ public class NewArticleFragment extends android.support.v4.app.Fragment implemen
     private NewArticleFetcher fetcher;
     private SwipeRefreshLayout swipeRefreshLayout;
     private EndlessRecyclerOnScrollListener endlessRecyclerOnScrollListener;
+    private ArticleAdapter.ArticleItemType lastArticleItemType;
 
     /**
      * 表示する記事リスト
@@ -60,10 +62,6 @@ public class NewArticleFragment extends android.support.v4.app.Fragment implemen
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeColors(R.color.red, R.color.green, R.color.blue, R.color.yellow);
-
-        //Fetcherの作成及び通信開始
-        initFetcherIfNeed();
-        fetcher.executeInitialFetch();
 
         return view;
     }
@@ -103,9 +101,30 @@ public class NewArticleFragment extends android.support.v4.app.Fragment implemen
         recyclerView.addOnScrollListener(endlessRecyclerOnScrollListener);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        UserSettingManager userSettingManager = new UserSettingManager(getActivity().getApplicationContext());
+        ArticleAdapter.ArticleItemType itemType = userSettingManager.getArticleItemType();
+
+        //表示タイプが変更されていた場合は更新する
+        if (lastArticleItemType == null || lastArticleItemType != itemType) {
+            articleAdapter.setArticleItemType(userSettingManager.getArticleItemType());
+            linearLayoutManager = new LinearLayoutManager(getActivity());
+            recyclerView.setLayoutManager(linearLayoutManager);
+            articleAdapter.notifyDataSetChanged();
+        }
+
+        //記事がなかったらFetcherの作成及び通信開始
+        if (articleAdapter.getItemCount() == 0) {
+            initFetcherIfNeed();
+            fetcher.executeInitialFetch();
+        }
+    }
+
     /**
      * フェッチが成功しました
-     *
      * @param responseList レスポンスのList
      */
     @Override
@@ -115,11 +134,7 @@ public class NewArticleFragment extends android.support.v4.app.Fragment implemen
         swipeRefreshLayout.setRefreshing(false);
         articleAdapter.setIsLoadMoreFailed(false);
         endlessRecyclerOnScrollListener.setCanLoad();
-
-        Intent intent = new Intent(this.getActivity(), FirstUserActivity.class);
-        startActivity(intent);
     }
-
 
     /**
      * フェッチが失敗しました

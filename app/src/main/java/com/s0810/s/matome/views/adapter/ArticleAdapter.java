@@ -18,14 +18,15 @@ import java.util.List;
 /**
  * Created by owner on 2015/07/27.
  */
-public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener{
+public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener {
 
     /**
      * 表示する記事Itemのレイアウト種別
      */
     public enum ArticleItemType {
         ARTICLE_ITEM_TYPE_BIG_IMAGE,
-        ARTICLE_ITEM_TYPE_SMALL_IMAGE
+        ARTICLE_ITEM_TYPE_SMALL_IMAGE,
+        ARTICLE_ITEM_TYPE_TEXT_ONLY,
     }
 
     private enum ViewType {
@@ -48,6 +49,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     /**
      * 表示に使用するレイアウト種別を設定します
+     *
      * @param itemType 使用する種別
      */
     public void setArticleItemType(ArticleItemType itemType) {
@@ -63,11 +65,11 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public final TextView descriptionTextView;
         public final ImageView imageView;
 
-        public ArticleViewHolder(View v){
+        public ArticleViewHolder(View v) {
             super(v);
-            titleTextView = (TextView)v.findViewById(R.id.article_title_text_view);
-            descriptionTextView = (TextView)v.findViewById(R.id.article_description_text_view);
-            imageView = (ImageView)v.findViewById(R.id.article_image_view);
+            titleTextView = (TextView) v.findViewById(R.id.article_title_text_view);
+            descriptionTextView = (TextView) v.findViewById(R.id.article_description_text_view);
+            imageView = (ImageView) v.findViewById(R.id.article_image_view);
         }
     }
 
@@ -77,10 +79,11 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {
         public final LinearLayout failedLayout;
         public final LinearLayout loadingLayout;
+
         public LoadingViewHolder(View v) {
             super(v);
-            failedLayout = (LinearLayout)v.findViewById(R.id.error_load_more_layout);
-            loadingLayout = (LinearLayout)v.findViewById(R.id.load_more_progress_layout);
+            failedLayout = (LinearLayout) v.findViewById(R.id.error_load_more_layout);
+            loadingLayout = (LinearLayout) v.findViewById(R.id.load_more_progress_layout);
         }
     }
 
@@ -90,6 +93,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     /**
      * 記事リストを更新します。更新すると直ちにnotifyDataSetChangedが発行されます。
+     *
      * @param articleList 更新する新しい記事リスト
      */
     public void updateArticleList(List<ArticleEntity> articleList) {
@@ -101,6 +105,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     /**
      * 更に読み込むが失敗したかどうかを設定します。
      * 設定するとその内容に応じてViewも切り替えます
+     *
      * @param isLoadMoreFailed 更に読み込むが失敗したかどうか
      */
     public void setIsLoadMoreFailed(Boolean isLoadMoreFailed) {
@@ -110,6 +115,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     /**
      * クリックされた時のリスナーを設定します。
+     *
      * @param listener
      */
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -121,7 +127,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (position == articleList.size()) {
             return ViewType.VIEW_TYPE_LOADING.ordinal();
         } else {
-            return  ViewType.VIEW_TYPE_ARTICLE.ordinal();
+            return ViewType.VIEW_TYPE_ARTICLE.ordinal();
         }
     }
 
@@ -142,6 +148,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     /**
      * 設定されたarticleItemTypeに応じて適切なlayoutリソースを返却します
+     *
      * @return
      */
     private int articleResource() {
@@ -150,6 +157,8 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 return R.layout.article_big_image_item_row;
             case ARTICLE_ITEM_TYPE_SMALL_IMAGE:
                 return R.layout.article_small_image_item_row;
+            case ARTICLE_ITEM_TYPE_TEXT_ONLY:
+                return R.layout.article_only_text_item_row;
             default:
                 return R.layout.article_big_image_item_row;
         }
@@ -183,8 +192,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 loadingViewHolder.loadingLayout.setVisibility(View.VISIBLE);
                 loadingViewHolder.failedLayout.setVisibility(View.GONE);
             }
-        }
-        else
+        } else
         //記事タイプの場合
         {
 
@@ -198,11 +206,19 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             //articleViewHolder.titleTextView.setText("テストのタイトル");
             //articleViewHolder.descriptionTextView.setText("テスト");
 
+            //ImageViewがなければ終了
+            if (articleViewHolder.imageView == null) return;
 
+            //////////////ここから下画像の設定
+            //resIdが設定されていない場合
             if (article.getImageUrl() != null && !"".equals(article.getImageUrl())) {
                 articleViewHolder.imageView.setVisibility(View.VISIBLE);
                 Picasso.with(context).load(article.getImageUrl()).fit().centerCrop().into(articleViewHolder.imageView);
                 //Picasso.with(context).load(article.getImageUrl()).resize(1, 1).centerCrop().into(articleViewHolder.imageView);
+            } else if (article.getImageResId() != 0) {
+                //resIdが設定されている場合
+                articleViewHolder.imageView.setVisibility(View.VISIBLE);
+                Picasso.with(context).load(article.getImageResId()).fit().centerCrop().into(articleViewHolder.imageView);
             } else {
                 articleViewHolder.imageView.setVisibility(View.GONE);
             }
