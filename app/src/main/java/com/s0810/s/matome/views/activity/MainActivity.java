@@ -1,7 +1,5 @@
 package com.s0810.s.matome.views.activity;
 
-import android.content.res.Configuration;
-import android.os.PersistableBundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

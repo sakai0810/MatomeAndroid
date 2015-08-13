@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/drawable"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <ImageView
+            android:id="@+id/article_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/primary_text"
+            android:transitionName="image" />
+
+        <TextView
+            android:id="@+id/article_title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:text="記事のタイトル"
+            android:textColor="@color/primary_text"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/article_description_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:paddingBottom="8dp"
+            android:paddingTop="16dp"
+            android:text="ImageContainerはリクエストを管理しているので、このインスタンスをImageViewのタグに設定して保持しておきます。"
+            android:textColor="@color/secondary_text"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+</RelativeLayout>

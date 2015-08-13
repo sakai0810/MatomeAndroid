@@ -79,6 +79,7 @@ public class NewArticleFragment extends android.support.v4.app.Fragment implemen
 
         //アダプタの設定
         articleAdapter = new ArticleAdapter(this.getActivity());
+        articleAdapter.setArticleItemType(ArticleAdapter.ArticleItemType.ARTICLE_ITEM_TYPE_SMALL_IMAGE);
         articleAdapter.setOnItemClickListener(this);
 
         //recyclerViewの設定

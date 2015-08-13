@@ -20,6 +20,14 @@ import java.util.List;
  */
 public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements View.OnClickListener{
 
+    /**
+     * 表示する記事Itemのレイアウト種別
+     */
+    public enum ArticleItemType {
+        ARTICLE_ITEM_TYPE_BIG_IMAGE,
+        ARTICLE_ITEM_TYPE_SMALL_IMAGE
+    }
+
     private enum ViewType {
         VIEW_TYPE_ARTICLE,
         VIEW_TYPE_LOADING,
@@ -30,17 +38,30 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private RecyclerView recyclerView;
     private Context context;
 
+    /**
+     * 表示する記事Itemの種類
+     */
+    private ArticleItemType articleItemType;
+
     //更に読み込むが失敗したかどうか
     private Boolean isLoadMoreFailed = false;
+
+    /**
+     * 表示に使用するレイアウト種別を設定します
+     * @param itemType 使用する種別
+     */
+    public void setArticleItemType(ArticleItemType itemType) {
+        this.articleItemType = itemType;
+    }
 
     /**
      * 記事のViewHolder
      */
     public static class ArticleViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView titleTextView;
-        public TextView descriptionTextView;
-        public ImageView imageView;
+        public final TextView titleTextView;
+        public final TextView descriptionTextView;
+        public final ImageView imageView;
 
         public ArticleViewHolder(View v){
             super(v);
@@ -54,8 +75,8 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
      * 読み込み中のViewHolder
      */
     public static class LoadingViewHolder extends RecyclerView.ViewHolder {
-        public LinearLayout failedLayout;
-        public LinearLayout loadingLayout;
+        public final LinearLayout failedLayout;
+        public final LinearLayout loadingLayout;
         public LoadingViewHolder(View v) {
             super(v);
             failedLayout = (LinearLayout)v.findViewById(R.id.error_load_more_layout);
@@ -106,14 +127,30 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
+        //ViewTypeによって適切なViewをインフレートする
         if (viewType == ViewType.VIEW_TYPE_ARTICLE.ordinal()) {
-            View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.article_item_row, viewGroup, false);
+            View v = LayoutInflater.from(viewGroup.getContext()).inflate(articleResource(), viewGroup, false);
             v.setOnClickListener(this);
             return new ArticleViewHolder(v);
         } else {
             View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.loading_item_row, viewGroup, false);
             v.setOnClickListener(this);
             return new LoadingViewHolder(v);
+        }
+    }
+
+    /**
+     * 設定されたarticleItemTypeに応じて適切なlayoutリソースを返却します
+     * @return
+     */
+    private int articleResource() {
+        switch (articleItemType) {
+            case ARTICLE_ITEM_TYPE_BIG_IMAGE:
+                return R.layout.article_big_image_item_row;
+            case ARTICLE_ITEM_TYPE_SMALL_IMAGE:
+                return R.layout.article_small_image_item_row;
+            default:
+                return R.layout.article_big_image_item_row;
         }
     }
 
@@ -137,9 +174,11 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (holder.getItemViewType() == ViewType.VIEW_TYPE_LOADING.ordinal()) {
             LoadingViewHolder loadingViewHolder = (LoadingViewHolder) holder;
             if (isLoadMoreFailed) {
+                //失敗していた場合その表示に変える
                 loadingViewHolder.loadingLayout.setVisibility(View.GONE);
                 loadingViewHolder.failedLayout.setVisibility(View.VISIBLE);
             } else {
+                //失敗していない場合くるくる表示に変える
                 loadingViewHolder.loadingLayout.setVisibility(View.VISIBLE);
                 loadingViewHolder.failedLayout.setVisibility(View.GONE);
             }
@@ -185,8 +224,10 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             //最後
             if (position == this.getItemCount() - 1) {
+                //ローディングクリックのリスナー呼び出し
                 onItemClickListener.onLoadClick(this, v);
             } else {
+                //記事クリックのリスナー呼び出し
                 ArticleEntity item = articleList.get(position);
                 onItemClickListener.onArticleClick(this, v, position, item);
             }

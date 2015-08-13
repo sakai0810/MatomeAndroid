@@ -37,13 +37,13 @@ public class NewArticleFetcher {
     //リクエストキュー
     private RequestQueue requestQueue;
     //コンテキスト
-    private Context context;
+    private final Context context;
 
     //Fetcherのリスナー
     public NewArticleFetcherCallBack listener;
 
     public NewArticleFetcher(Context context) {
-        newArticleList = new ArrayList<ArticleEntity>();
+        newArticleList = new ArrayList<>();
         this.context = context;
     }
 
