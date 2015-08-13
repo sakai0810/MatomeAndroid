@@ -1,7 +1,6 @@
 package com.s0810.s.matome.network;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,8 +24,9 @@ import java.util.List;
  */
 public class NewArticleFetcher {
 
+
     //新着記事一覧URL
-    static final String newArticleUrl = "http://mamamatome.appspot.com/light?&count=10";
+    static final String newArticleUrl = "http://mamamatome.appspot.com/light?&count=30";
 
     //次に読み込むべきページ番号
     private Integer pageNext = 1;
@@ -113,7 +113,7 @@ public class NewArticleFetcher {
 
     /**
      * ページ番号からURLを生成します。
-     * @return
+     * @return 生成したURL
      */
     private String urlWithPageQuery() {
         String retURL = newArticleUrl + "&page=" + pageNext.toString();

@@ -1,9 +1,5 @@
 package com.s0810.s.matome.views.adapter;
 
-import com.s0810.s.matome.R;
-import com.s0810.s.matome.models.ArticleEntity;
-import com.squareup.picasso.Picasso;
-
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.s0810.s.matome.R;
+import com.s0810.s.matome.models.ArticleEntity;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -185,16 +185,17 @@ public class ArticleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             //最後
             if (position == this.getItemCount() - 1) {
-                onItemClickListener.onLoadClick(this);
+                onItemClickListener.onLoadClick(this, v);
             } else {
                 ArticleEntity item = articleList.get(position);
-                onItemClickListener.onArticleClick(this, position, item);
+                onItemClickListener.onArticleClick(this, v, position, item);
             }
         }
     }
 
-    public static interface OnItemClickListener {
-        public void onArticleClick(ArticleAdapter adapter, int position, ArticleEntity articleEntity);
-        public void onLoadClick(ArticleAdapter adapter);
+    public interface OnItemClickListener {
+        void onArticleClick(ArticleAdapter adapter, View view, int position, ArticleEntity articleEntity);
+
+        void onLoadClick(ArticleAdapter adapter, View view);
     }
 }

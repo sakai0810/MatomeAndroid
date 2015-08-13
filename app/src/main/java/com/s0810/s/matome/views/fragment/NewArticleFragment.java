@@ -1,6 +1,7 @@
 package com.s0810.s.matome.views.fragment;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,11 +10,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 
 import com.android.volley.VolleyError;
 import com.s0810.s.matome.R;
@@ -36,6 +35,7 @@ public class NewArticleFragment extends android.support.v4.app.Fragment implemen
     private LinearLayoutManager linearLayoutManager;
     private NewArticleFetcher fetcher;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private EndlessRecyclerOnScrollListener endlessRecyclerOnScrollListener;
 
     /**
      * 表示する記事リスト
@@ -88,16 +88,16 @@ public class NewArticleFragment extends android.support.v4.app.Fragment implemen
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         //更に読み込むリスナーの設定及び更に読み込む実装
-        recyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
+        //TODO:更に読み込む中に引っ張って更新するとフラグがオフにならずにバグる
+        endlessRecyclerOnScrollListener = new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore() {
                 articleAdapter.setIsLoadMoreFailed(false);
                 fetcher.executeAddFetch();
             }
-        });
-
+        };
+        recyclerView.addOnScrollListener(endlessRecyclerOnScrollListener);
     }
-
     /**
      * フェッチが成功しました
      * @param responseList レスポンスのList
@@ -108,6 +108,7 @@ public class NewArticleFragment extends android.support.v4.app.Fragment implemen
         articleAdapter.updateArticleList(articleList);
         swipeRefreshLayout.setRefreshing(false);
         articleAdapter.setIsLoadMoreFailed(false);
+        endlessRecyclerOnScrollListener.setCanLoad();
     }
 
 
@@ -119,7 +120,9 @@ public class NewArticleFragment extends android.support.v4.app.Fragment implemen
     public void onNewArticleFetchError(VolleyError error) {
         swipeRefreshLayout.setRefreshing(false);
         articleAdapter.setIsLoadMoreFailed(true);
-        Snackbar.make(this.getView(),R.string.error_network_snackbar,Snackbar.LENGTH_SHORT).show();
+        if (this.getView() != null) {
+            Snackbar.make(this.getView(), R.string.error_network_snackbar, Snackbar.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -129,10 +132,13 @@ public class NewArticleFragment extends android.support.v4.app.Fragment implemen
      * @param articleEntity
      */
     @Override
-    public void onArticleClick(ArticleAdapter adapter, int position, ArticleEntity articleEntity) {
+    public void onArticleClick(ArticleAdapter adapter, View view, int position, ArticleEntity articleEntity) {
         Intent intent = new Intent(this.getActivity(), ArticleWebActivity.class);
         intent.putExtra("url", articleEntity.getArticleUrl());
+        View fromView = view.findViewById(R.id.article_image_view);
+        Activity activity = this.getActivity();
         startActivity(intent);
+//        ActivityCompat.startActivity(activity,intent, ActivityOptionsCompat.makeSceneTransitionAnimation(activity, fromView, "image").toBundle());
     }
 
     /**
@@ -140,7 +146,7 @@ public class NewArticleFragment extends android.support.v4.app.Fragment implemen
      * @param adapter
      */
     @Override
-    public void onLoadClick(ArticleAdapter adapter) {
+    public void onLoadClick(ArticleAdapter adapter, View view) {
         fetcher.executeAddFetch();
         articleAdapter.setIsLoadMoreFailed(false);
     }
